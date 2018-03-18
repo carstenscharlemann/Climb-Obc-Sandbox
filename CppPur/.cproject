@@ -78,6 +78,7 @@
 								</option>
 								<option id="com.crt.advproject.link.cpp.hdrlib.1271941204" name="Library" superClass="com.crt.advproject.link.cpp.hdrlib" value="com.crt.advproject.cpp.link.hdrlib.newlib.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.cpp.crpenable.61496897" superClass="com.crt.advproject.link.cpp.crpenable" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.link.cpp.multicore.slave.1775323199" superClass="com.crt.advproject.link.cpp.multicore.slave"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.980334972" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -197,10 +198,7 @@
 		<projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
 &lt;TargetConfig&gt;&#13;
 &lt;Properties property_2="LPC175x_6x_512.cfx" property_3="NXP" property_4="LPC1769" property_count="5" version="70200"/&gt;&#13;
-&lt;infoList vendor="NXP"&gt;&#13;
-&lt;info chip="LPC1769" flash_driver="LPC175x_6x_512.cfx" match_id="0x26113F37" name="LPC1769" package="lpc17_lqfp100.xml" stub="crt_emu_cm3_nxp"&gt;&#13;
-&lt;chip&gt;&#13;
-&lt;name&gt;LPC1769&lt;/name&gt;&#13;
+&lt;infoList vendor="NXP"&gt;&lt;info chip="LPC1769" flash_driver="LPC175x_6x_512.cfx" match_id="0x26113F37" name="LPC1769" package="lpc17_lqfp100.xml" stub="crt_emu_cm3_nxp"&gt;&lt;chip&gt;&lt;name&gt;LPC1769&lt;/name&gt;&#13;
 &lt;family&gt;LPC17xx&lt;/family&gt;&#13;
 &lt;vendor&gt;NXP (formerly Philips)&lt;/vendor&gt;&#13;
 &lt;reset board="None" core="Real" sys="Real"/&gt;&#13;
@@ -262,8 +260,7 @@
 &lt;peripheralInstance derived_from="LPC17_MCPWM" determined="infoFile" enable="SYSCTL.PCONP.PCMCPWM&amp;amp;0x1" id="MCPWM" location="0x400B8000"/&gt;&#13;
 &lt;peripheralInstance derived_from="LPC17_FMC" determined="infoFile" id="FMC" location="0x40084000"/&gt;&#13;
 &lt;/chip&gt;&#13;
-&lt;processor&gt;&#13;
-&lt;name gcc_name="cortex-m3"&gt;Cortex-M3&lt;/name&gt;&#13;
+&lt;processor&gt;&lt;name gcc_name="cortex-m3"&gt;Cortex-M3&lt;/name&gt;&#13;
 &lt;family&gt;Cortex-M&lt;/family&gt;&#13;
 &lt;/processor&gt;&#13;
 &lt;link href="nxp_lpcxxxx_peripheral.xme" show="embed" type="simple"/&gt;&#13;
@@ -274,4 +271,6 @@
 	<storageModule moduleId="com.crt.advproject">
 		<boardId>LPCXpresso1769-CD</boardId>
 	</storageModule>
+	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>
