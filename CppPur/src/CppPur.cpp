@@ -40,10 +40,10 @@ int main(void) {
 	// Enter an infinite loop, just incrementing a counter
 	while (1) {
 		i++;
-		if (i % 20000 == 0) { /* Set Port */
+		if (i % 10000 == 0) { /* Set Port */
 			LPC_GPIO[LED0_GPIO_PORT_NUM].SET |= 1UL << LED0_GPIO_BIT_NUM;
 		}
-		if (i % 40000 == 0) {
+		if (i % 20000 == 0) {
 			LPC_GPIO[LED0_GPIO_PORT_NUM].CLR |= 1UL << LED0_GPIO_BIT_NUM;
 		}
 	}
