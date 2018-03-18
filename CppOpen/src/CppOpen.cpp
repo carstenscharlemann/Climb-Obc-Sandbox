@@ -43,6 +43,12 @@ int main(void) {
     // Enter an infinite loop, just incrementing a counter
     while(1) {
         i++ ;
+        if (i % 100000 == 0) {
+        	Board_LED_Set(0,true);
+        }
+        if (i % 200000 == 0) {
+        	Board_LED_Set(0,false);
+        }
     }
     return 0 ;
 }
