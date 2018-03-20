@@ -30,10 +30,19 @@ typedef struct { /* GPIO_PORT Structure */
 #define LED0_GPIO_PORT_NUM                      0
 #define LED0_GPIO_BIT_NUM                       22
 
+#define LED1_GPIO_PORT_NUM                      3
+#define LED1_GPIO_BIT_NUM                       25
+
+#define LED2_GPIO_PORT_NUM                      3
+#define LED2_GPIO_BIT_NUM                       26
+
+
 int main(void) {
 
 	//  Init the LED Pin as output
 	LPC_GPIO[LED0_GPIO_PORT_NUM].DIR |= 1UL << LED0_GPIO_BIT_NUM;
+	LPC_GPIO[LED1_GPIO_PORT_NUM].DIR |= 1UL << LED1_GPIO_BIT_NUM;
+	LPC_GPIO[LED2_GPIO_PORT_NUM].DIR |= 1UL << LED2_GPIO_BIT_NUM;
 
 	// Force the counter to be placed into memory
 	volatile static int i = 0;
@@ -44,8 +53,21 @@ int main(void) {
 			LPC_GPIO[LED0_GPIO_PORT_NUM].SET |= 1UL << LED0_GPIO_BIT_NUM;
 		}
 		if (i % 20000 == 0) {
+			LPC_GPIO[LED1_GPIO_PORT_NUM].SET |= 1UL << LED1_GPIO_BIT_NUM;
+		}
+		if (i % 30000 == 0) { /* Set Port */
+			LPC_GPIO[LED2_GPIO_PORT_NUM].SET |= 1UL << LED2_GPIO_BIT_NUM;
+		}
+		if (i % 40000 == 0) {
 			LPC_GPIO[LED0_GPIO_PORT_NUM].CLR |= 1UL << LED0_GPIO_BIT_NUM;
 		}
+		if (i % 50000 == 0) { /* Set Port */
+			LPC_GPIO[LED1_GPIO_PORT_NUM].CLR |= 1UL << LED1_GPIO_BIT_NUM;
+		}
+		if (i % 60000 == 0) {
+			LPC_GPIO[LED2_GPIO_PORT_NUM].CLR |= 1UL << LED2_GPIO_BIT_NUM;
+		}
+
 	}
 	return 0;
 }
