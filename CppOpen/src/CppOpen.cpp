@@ -40,15 +40,29 @@ int main(void) {
 
     // Force the counter to be placed into memory
     volatile static int i = 0 ;
+    volatile static int l = 0 ;
+
     // Enter an infinite loop, just incrementing a counter
     while(1) {
-        i++ ;
-        if (i % 100000 == 0) {
-        	Board_LED_Set(0,true);
+        i++;
+        if (i % 1000000 == 0) {
+        	l++;
+        	if (l & 0x01) {
+        		Board_LED_Set(0,false);
+        	} else {
+        		Board_LED_Set(0,true);
+        	}
+        	if (l & 0x02) {
+				Board_LED_Set(1,false);
+			} else {
+				Board_LED_Set(1,true);
+			}if (l & 0x04) {
+				Board_LED_Set(2,false);
+			} else {
+				Board_LED_Set(2,true);
+			}
         }
-        if (i % 200000 == 0) {
-        	Board_LED_Set(0,false);
-        }
+
     }
     return 0 ;
 }
