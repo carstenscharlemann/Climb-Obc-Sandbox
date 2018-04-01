@@ -81,11 +81,19 @@ extern "C" {
 /**
  * LED defines
  */
+#define LED_RED            0x00
+#define LED_GREEN          0x01
+#define LED_BLUE           0x02
+
+
 #define LEDS_LED1           0x01
 #define LEDS_LED2           0x02
 #define LEDS_LED3           0x04
 #define LEDS_LED4           0x08
 #define LEDS_NO_LEDS        0x00
+
+
+
 
 /**
  * Button defines

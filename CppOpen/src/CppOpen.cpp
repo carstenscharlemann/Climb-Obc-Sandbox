@@ -19,6 +19,7 @@
 #include <cr_section_macros.h>
 
 // TODO: insert other include files here
+#include "CmdLine.h"
 
 // TODO: insert other definitions and declarations here
 
@@ -33,6 +34,9 @@ int main(void) {
     Board_Init();
     // Set the LED to the state of "On"
     Board_LED_Set(0, true);
+
+    Board_UARTPutSTR("Hallo LPC (type 'm' for menue)\r");
+
 #endif
 #endif
 
@@ -44,7 +48,13 @@ int main(void) {
 
     // Enter an infinite loop, just incrementing a counter
     while(1) {
-        i++;
+
+
+    	if (Board_UARTGetChar() == 'm') {
+    		CmdLine ml;// = new CmdLine();
+    		ml.MainLoop();
+    	}
+    	i++;
         if (i % 1000000 == 0) {
         	l++;
         	if (l & 0x01) {
@@ -61,8 +71,9 @@ int main(void) {
 			} else {
 				Board_LED_Set(2,true);
 			}
-        }
 
+        }
     }
     return 0 ;
+
 }
