@@ -26,7 +26,32 @@ The MCUXpresso IDE is based on Eclipse. Eclipsa always starts up with your last 
 
 2. Generate a new workspace with
 
-File - Switch Workspace - Other...
-and choose a empty directory somewhere on your disk
+- File - Switch Workspace - Other...
+- and choose a empty directory somewhere on your disk
+
+3. Import projects from github repository
+
+- File - Import
+- select the "projects from git" Import Wizzard under the git folder
+- choose "Clone URI" as repository source
+- Fill in following data in the upcoming Dialog: 
+  - URI: "https://github.com/carstenscharlemann/Climb-Obc-Sandbox.git"
+  - Username Password of yout github account
+
+![Step3d](./McuPic2.png)
+
+- On the next page choose the branches you want to clone locally (master, develop, ....)
+- Next page: **choose a destination folder OUTSIDE OF YOUR Eclips workspace folder!!!**
+
+![Step3f](./McuPic3.png)
+
+- Now select 'Import existing Eclipse Projects'
+- Select (tick) all projects to import in your workspace
+- Click 'Finish' Button to get all projects into your workspace.
+
+
+
+  
+   
 
 
