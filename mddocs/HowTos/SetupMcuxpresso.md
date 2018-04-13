@@ -19,6 +19,14 @@ You can get its binaries (Win/Linux/Apple included) either from
 ## Setup new/empty workspace and import project structure from github
 
 1. Workspaces
+
 The MCUXpresso IDE is based on Eclipse. Eclipsa always starts up with your last used 'Workspace'. When started the first time there is a default worspace generated in your user profile. You can see the current used workspace in the upper left corner of the IDE.
 
 ![Step1](./McuPic1.png)
+
+2. Generate a new workspace with
+
+File - Switch Workspace - Other...
+and choose a empty directory somewhere on your disk
+
+
