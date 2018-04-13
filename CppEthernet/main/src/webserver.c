@@ -200,7 +200,13 @@ int wsmain(void)
 		if (!prt_ip) {
 			if (lpc_netif.ip_addr.addr) {
 				static char tmp_buff[16];
-				Board_UARTPutSTR("IP_ADDR    : %s\r\n");
+
+				// Test Scanf
+				// char buffer[64];
+				// printf("Please enter a single string:\n\r");
+				// scanf("%s", buffer);
+				// DEBUGSTR(buffer);
+
 				DEBUGOUT("IP_ADDR    : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.ip_addr, tmp_buff, 16));
 				DEBUGOUT("NET_MASK   : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.netmask, tmp_buff, 16));
 				DEBUGOUT("GATEWAY_IP : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.gw, tmp_buff, 16));
