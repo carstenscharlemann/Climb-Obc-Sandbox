@@ -63,28 +63,6 @@ static struct netif lpc_netif;
  ****************************************************************************/
 
 /*****************************************************************************
- * Private functions
- ****************************************************************************/
-
-/* Sets up system hardware */
-
-
-static void prvSetupHardware(void)
-{
-	/* LED0 is used for the link status, on = PHY cable detected */
-	SystemCoreClockUpdate();
-	Board_Init();
-
-	/* Initial LED state is off to show an unconnected cable state */
-	Board_LED_Set(0, false);
-	Board_LED_Set(1, false);
-	/* Setup a 1mS sysTick for the primary time base */
-	SysTick_Enable(1);
-
-}
-
-
-/*****************************************************************************
  * Public functions
  ****************************************************************************/
 
@@ -98,8 +76,6 @@ int wsmain(void)
 	uint32_t physts;
 	ip_addr_t ipaddr, netmask, gw;
 	static int prt_ip = 0;
-
-	prvSetupHardware();
 
 	/* In hitex evaluation boards, the Ethernet interface and 
 	 * SDCARD interface are mutually exclusive

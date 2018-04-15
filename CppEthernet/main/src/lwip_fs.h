@@ -166,12 +166,12 @@ void fs_state_free(struct fs_file *file, void *state);
  */
 void assert_printf(char *msg, int line, char *file);
 
-/**
- * @brief	This is a dummy function, required for debug
- * @param eno	:	Error Number
- * @return Empty string
- */
-const char *lwip_strerr(err_t eno);
+///**
+// * @brief	This is a dummy function, required for debug
+// * @param eno	:	Error Number
+// * @return Empty string
+// */
+//const char *lwip_strerr(err_t eno);
 #endif
 
 /**

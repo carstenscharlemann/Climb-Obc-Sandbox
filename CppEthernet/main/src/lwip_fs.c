@@ -291,15 +291,15 @@ int fs_read(struct fs_file *file, char *buffer, int count)
 
 #ifdef LWIP_DEBUG
 /* Assert print function */
-void assert_printf(char *msg, int line, char *file)
-{
-	DEBUGOUT("ASSERT: %s at %s:%d\r\n", msg, file, line);
-}
-
-/* LWIP str err function */
-const char *lwip_strerr(err_t eno)
-{
-	return "";
-}
-
+//void assert_printf(char *msg, int line, char *file)
+//{
+//	DEBUGOUT("ASSERT: %s at %s:%d\r\n", msg, file, line);
+//}
+//
+///* LWIP str err function */
+//const char *lwip_strerr(err_t eno)
+//{
+//	return "";
+//}
+//
 #endif
