@@ -42,6 +42,7 @@
 #include "fs_mem.h"
 #endif
 
+//#include <Page.h>
 /**
  * @ingroup EXAMPLES_DUALCORE_LWIP_FS
  * @{
@@ -55,8 +56,8 @@
 const static char http_index_html[] =
 	"<html><head><title>Congrats!</title></head>"
 	"<body><h1>Welcome to our lwIP HTTP server!</h1>"
-	"<p>This is a small test page, served by httpd of "
-	"lwip.</p></body></html>";
+	"<a href=""/page1.html"">Goto Page1</a></body> "
+	"</html>";
 #ifndef SECTOR_SZ
 #define SECTOR_SZ 512
 #endif
@@ -231,7 +232,7 @@ struct fs_file *fs_open(const char *name) {
 	fs->http_header_included = 1;
 	return fs;
 #else
-	return 0;
+	return  get_fs_from_page(name);
 #endif
 }
 

@@ -13,8 +13,8 @@ extern "C"
 {
 #endif
 
-uint32_t pollwsPhySts(void);
-int wsinit(void);
+uint32_t ws_poll_physts(void);
+void ws_init(void);
 
 
 #ifdef __cplusplus

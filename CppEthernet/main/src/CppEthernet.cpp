@@ -1,3 +1,4 @@
+
 #if defined (__USE_LPCOPEN)
 #if defined(NO_BOARD_LIB)
 #include "chip.h"
@@ -11,6 +12,8 @@
 //#include "CmdLine.h"
 #include "arch/lpc_arch.h" 	//  SysTick_Enable() from lwip/arch/lpc17xx_40xx_systick_arch.c
 #include "webserver.h"
+#include "lwip_fs.h"
+#include <Page.hh>
 
 
 /* Sets up system hardware */
@@ -30,15 +33,19 @@ void setupHardware(void)
 
 }
 
+extern "C" fs_file *get_fs_from_page(const char *name) {
+	Page p(name);
+	return p.GetHttpFile();
+}
 
 int main(void) {
 
 	setupHardware();
-	wsinit();
+	ws_init();
 
 	while(1) {
 		// Poll and check for PHY stat changes of Ethernet
-		uint32_t physts = pollwsPhySts();
+		uint32_t physts = ws_poll_physts();
 		if (physts & PHY_LINK_CHANGED) {
 			if (physts & PHY_LINK_CONNECTED) {
 				Board_LED_Set(LED_RED, !(physts & PHY_LINK_ERROR));
@@ -50,8 +57,5 @@ int main(void) {
 				Board_LED_Set(2, true);
 			}
 		}
-
-
 	}
-
 }

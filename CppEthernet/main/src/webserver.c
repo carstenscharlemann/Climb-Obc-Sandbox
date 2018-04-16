@@ -49,6 +49,9 @@
 #include "arch/lpc_arch.h"
 #include "httpd.h"
 
+
+#include "webserver.h"
+
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
@@ -66,7 +69,7 @@ static struct netif lpc_netif;
  * Public functions
  ****************************************************************************/
 
-void wsinit(void) {
+void ws_init(void) {
 	//extern int fs_init(void);
 
 	ip_addr_t ipaddr, netmask, gw;
@@ -114,7 +117,7 @@ void wsinit(void) {
 }
 
 
-uint32_t pollwsPhySts() {
+uint32_t ws_poll_physts() {
 	/* This could be done in the sysTick ISR, but may stay in IRQ context
 	   too long, so do this stuff with a background loop. */
 
@@ -172,7 +175,7 @@ uint32_t pollwsPhySts() {
 	}
 
 	if (!prt_ip) {
-		// Wait until adress is set, after connect....
+		// Wait until address is set, after connect....
 		if (lpc_netif.ip_addr.addr) {
 			static char tmp_buff[16];
 			DEBUGOUT("IP_ADDR     : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.ip_addr, tmp_buff, 16));
@@ -189,13 +192,13 @@ uint32_t pollwsPhySts() {
  * @brief	main routine for example_lwip_tcpecho_sa_17xx40xx
  * @return	Function should not exit.
  */
-int wsmain(void)
-{
-
-	while (1) {
-		pollwsPhySts();
-	}
-
-	/* Never returns, for warning only */
-	return 0;
-}
+//int wsmain(void)
+//{
+//
+//	while (1) {
+//		pollwsPhySts();
+//	}
+//
+//	/* Never returns, for warning only */
+//	return 0;
+//}
