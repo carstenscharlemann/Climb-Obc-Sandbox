@@ -8,32 +8,22 @@
 
 #include <cr_section_macros.h>
 
-// TODO: insert other include files here
 //#include "CmdLine.h"
 #include "arch/lpc_arch.h" 	//  SysTick_Enable() from lwip/arch/lpc17xx_40xx_systick_arch.c
-
-// TODO: insert other definitions and declarations here
-
-
-
-extern "C" {
-	extern int wsmain(void);
-}
+#include "webserver.h"
 
 
 /* Sets up system hardware */
-
-
-void prvSetupHardware(void)
+void setupHardware(void)
 {
 	/* LED0 is used for the link status, on = PHY cable detected */
 	SystemCoreClockUpdate();
 	Board_Init();
 
 	/* Initial LED state is off to show an unconnected cable state */
-	Board_LED_Set(0, false);
-	Board_LED_Set(1, false);
-	Board_LED_Set(2, false);
+	Board_LED_Set(0, true);
+	Board_LED_Set(1, true);
+	Board_LED_Set(2, true);
 
 	/* Setup a 1mS sysTick for the primary time base */
 	SysTick_Enable(1);
@@ -43,8 +33,25 @@ void prvSetupHardware(void)
 
 int main(void) {
 
-	prvSetupHardware();
+	setupHardware();
+	wsinit();
 
-	// Call the c code main loop
-	wsmain();
+	while(1) {
+		// Poll and check for PHY stat changes of Ethernet
+		uint32_t physts = pollwsPhySts();
+		if (physts & PHY_LINK_CHANGED) {
+			if (physts & PHY_LINK_CONNECTED) {
+				Board_LED_Set(LED_RED, !(physts & PHY_LINK_ERROR));
+				Board_LED_Set(LED_GREEN, !(physts & PHY_LINK_FULLDUPLX));
+				Board_LED_Set(LED_BLUE, !(physts & PHY_LINK_SPEED100));
+			} else {
+				Board_LED_Set(0, true);
+				Board_LED_Set(1, true);
+				Board_LED_Set(2, true);
+			}
+		}
+
+
+	}
+
 }

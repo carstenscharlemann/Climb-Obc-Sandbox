@@ -66,130 +66,133 @@ static struct netif lpc_netif;
  * Public functions
  ****************************************************************************/
 
+void wsinit(void) {
+	//extern int fs_init(void);
+
+	ip_addr_t ipaddr, netmask, gw;
+
+	/* In hitex evaluation boards, the Ethernet interface and
+		 * SDCARD interface are mutually exclusive
+		 */
+	#if defined(LWIP_FATFS_SUPPORT)
+		/* Initialize the file system */
+		fs_init();
+	#endif
+
+		/* Initialize LWIP */
+		lwip_init();
+
+		LWIP_DEBUGF(LWIP_DBG_ON, ("Starting LWIP TCP server...\n"));
+
+		/* Static IP assignment */
+	#if LWIP_DHCP
+		IP4_ADDR(&gw, 0, 0, 0, 0);
+		IP4_ADDR(&ipaddr, 0, 0, 0, 0);
+		IP4_ADDR(&netmask, 0, 0, 0, 0);
+	#else
+		IP4_ADDR(&gw, 10, 1, 10, 1);
+		IP4_ADDR(&ipaddr, 10, 1, 10, 234);
+		IP4_ADDR(&netmask, 255, 255, 255, 0);
+		APP_PRINT_IP(&ipaddr);
+	#endif
+
+		/* Add netif interface for lpc17xx_8x */
+		netif_add(&lpc_netif, &ipaddr, &netmask, &gw, NULL, lpc_enetif_init,
+				  ethernet_input);
+		netif_set_default(&lpc_netif);
+		netif_set_up(&lpc_netif);
+
+	#if LWIP_DHCP
+		dhcp_start(&lpc_netif);
+	#endif
+
+		/* Initialize and start application */
+		httpd_init();
+
+
+}
+
+
+uint32_t pollwsPhySts() {
+	/* This could be done in the sysTick ISR, but may stay in IRQ context
+	   too long, so do this stuff with a background loop. */
+
+	uint32_t physts;
+	static int prt_ip = 0;
+
+	/* Handle packets as part of this loop, not in the IRQ handler */
+	lpc_enetif_input(&lpc_netif);
+
+	/* lpc_rx_queue will re-qeueu receive buffers. This normally occurs
+	   automatically, but in systems were memory is constrained, pbufs
+	   may not always be able to get allocated, so this function can be
+	   optionally enabled to re-queue receive buffers. */
+	#if 0
+		while (lpc_rx_queue(&lpc_netif)) {}
+	#endif
+
+	/* Free TX buffers that are done sending */
+	lpc_tx_reclaim(&lpc_netif);
+
+	/* LWIP timers - ARP, DHCP, TCP, etc. */
+	sys_check_timeouts();
+
+	/* Call the PHY status update state machine once in a while
+	   to keep the link status up-to-date */
+	physts = lpcPHYStsPoll();
+
+	/* Only check for connection state when the PHY status has changed */
+	if (physts & PHY_LINK_CHANGED) {
+		if (physts & PHY_LINK_CONNECTED) {
+			prt_ip = 0;
+			/* Set interface speed and duplex */
+			if (physts & PHY_LINK_SPEED100) {
+				Chip_ENET_Set100Mbps(LPC_ETHERNET);
+				NETIF_INIT_SNMP(&lpc_netif, snmp_ifType_ethernet_csmacd, 100000000);
+			}
+			else {
+				Chip_ENET_Set10Mbps(LPC_ETHERNET);
+				NETIF_INIT_SNMP(&lpc_netif, snmp_ifType_ethernet_csmacd, 10000000);
+			}
+			if (physts & PHY_LINK_FULLDUPLX) {
+				Chip_ENET_SetFullDuplex(LPC_ETHERNET);
+			}
+			else {
+				Chip_ENET_SetHalfDuplex(LPC_ETHERNET);
+			}
+			netif_set_link_up(&lpc_netif);
+			DEBUGSTR("Link connected.\r\n");
+		}
+		else {
+			netif_set_link_down(&lpc_netif);
+			DEBUGSTR("Link disconnected.\r\n");
+		}
+
+	}
+
+	if (!prt_ip) {
+		// Wait until adress is set, after connect....
+		if (lpc_netif.ip_addr.addr) {
+			static char tmp_buff[16];
+			DEBUGOUT("IP_ADDR    : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.ip_addr, tmp_buff, 16));
+			DEBUGOUT("NET_MASK   : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.netmask, tmp_buff, 16));
+			DEBUGOUT("GATEWAY_IP : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.gw, tmp_buff, 16));
+			prt_ip = 1;
+		}
+	}
+
+	return physts;
+}
+
 /**
  * @brief	main routine for example_lwip_tcpecho_sa_17xx40xx
  * @return	Function should not exit.
  */
 int wsmain(void)
 {
-	extern int fs_init(void);
-	uint32_t physts;
-	ip_addr_t ipaddr, netmask, gw;
-	static int prt_ip = 0;
 
-	/* In hitex evaluation boards, the Ethernet interface and 
-	 * SDCARD interface are mutually exclusive
-	 */
-#if defined(LWIP_FATFS_SUPPORT)
-	/* Initialize the file system */
-	fs_init();
-#endif
-
-	/* Initialize LWIP */
-	lwip_init();
-
-	LWIP_DEBUGF(LWIP_DBG_ON, ("Starting LWIP TCP echo server...\n"));
-
-	/* Static IP assignment */
-#if LWIP_DHCP
-	IP4_ADDR(&gw, 0, 0, 0, 0);
-	IP4_ADDR(&ipaddr, 0, 0, 0, 0);
-	IP4_ADDR(&netmask, 0, 0, 0, 0);
-#else
-	IP4_ADDR(&gw, 10, 1, 10, 1);
-	IP4_ADDR(&ipaddr, 10, 1, 10, 234);
-	IP4_ADDR(&netmask, 255, 255, 255, 0);
-	APP_PRINT_IP(&ipaddr);
-#endif
-
-	/* Add netif interface for lpc17xx_8x */
-	netif_add(&lpc_netif, &ipaddr, &netmask, &gw, NULL, lpc_enetif_init,
-			  ethernet_input);
-	netif_set_default(&lpc_netif);
-	netif_set_up(&lpc_netif);
-
-#if LWIP_DHCP
-	dhcp_start(&lpc_netif);
-#endif
-
-	/* Initialize and start application */
-	httpd_init();
-
-	/* This could be done in the sysTick ISR, but may stay in IRQ context
-	   too long, so do this stuff with a background loop. */
 	while (1) {
-		/* Handle packets as part of this loop, not in the IRQ handler */
-		lpc_enetif_input(&lpc_netif);
-
-		/* lpc_rx_queue will re-qeueu receive buffers. This normally occurs
-		   automatically, but in systems were memory is constrained, pbufs
-		   may not always be able to get allocated, so this function can be
-		   optionally enabled to re-queue receive buffers. */
-#if 0
-		while (lpc_rx_queue(&lpc_netif)) {}
-#endif
-
-		/* Free TX buffers that are done sending */
-		lpc_tx_reclaim(&lpc_netif);
-
-		/* LWIP timers - ARP, DHCP, TCP, etc. */
-		sys_check_timeouts();
-
-		/* Call the PHY status update state machine once in a while
-		   to keep the link status up-to-date */
-		physts = lpcPHYStsPoll();
-
-		/* Only check for connection state when the PHY status has changed */
-		if (physts & PHY_LINK_CHANGED) {
-			if (physts & PHY_LINK_CONNECTED) {
-				Board_LED_Set(0, true);
-				prt_ip = 0;
-
-				/* Set interface speed and duplex */
-				if (physts & PHY_LINK_SPEED100) {
-					Chip_ENET_Set100Mbps(LPC_ETHERNET);
-					NETIF_INIT_SNMP(&lpc_netif, snmp_ifType_ethernet_csmacd, 100000000);
-				}
-				else {
-					Chip_ENET_Set10Mbps(LPC_ETHERNET);
-					NETIF_INIT_SNMP(&lpc_netif, snmp_ifType_ethernet_csmacd, 10000000);
-				}
-				if (physts & PHY_LINK_FULLDUPLX) {
-					Chip_ENET_SetFullDuplex(LPC_ETHERNET);
-				}
-				else {
-					Chip_ENET_SetHalfDuplex(LPC_ETHERNET);
-				}
-
-				netif_set_link_up(&lpc_netif);
-			}
-			else {
-				Board_LED_Set(0, false);
-				Board_LED_Set(1, false);
-				netif_set_link_down(&lpc_netif);
-			}
-
-			DEBUGOUT("Link connect status: %d\r\n", ((physts & PHY_LINK_CONNECTED) != 0));
-		}
-
-		/* Print IP address info */
-		if (!prt_ip) {
-			if (lpc_netif.ip_addr.addr) {
-				static char tmp_buff[16];
-
-				// Test Scanf
-				// char buffer[64];
-				// printf("Please enter a single string:\n\r");
-				// scanf("%s", buffer);
-				// DEBUGSTR(buffer);
-
-				DEBUGOUT("IP_ADDR    : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.ip_addr, tmp_buff, 16));
-				DEBUGOUT("NET_MASK   : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.netmask, tmp_buff, 16));
-				DEBUGOUT("GATEWAY_IP : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.gw, tmp_buff, 16));
-				prt_ip = 1;
-				Board_LED_Set(1, true);
-			}
-		}
+		pollwsPhySts();
 	}
 
 	/* Never returns, for warning only */
