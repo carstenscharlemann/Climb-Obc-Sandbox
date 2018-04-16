@@ -109,6 +109,7 @@ void wsinit(void) {
 		/* Initialize and start application */
 		httpd_init();
 
+		DEBUGOUT("Lwip Version: %d.%d.%d\r\n", LWIP_VERSION_MAJOR, LWIP_VERSION_MINOR, LWIP_VERSION_REVISION);
 
 }
 
@@ -174,9 +175,9 @@ uint32_t pollwsPhySts() {
 		// Wait until adress is set, after connect....
 		if (lpc_netif.ip_addr.addr) {
 			static char tmp_buff[16];
-			DEBUGOUT("IP_ADDR    : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.ip_addr, tmp_buff, 16));
-			DEBUGOUT("NET_MASK   : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.netmask, tmp_buff, 16));
-			DEBUGOUT("GATEWAY_IP : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.gw, tmp_buff, 16));
+			DEBUGOUT("IP_ADDR     : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.ip_addr, tmp_buff, 16));
+			DEBUGOUT("NET_MASK    : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.netmask, tmp_buff, 16));
+			DEBUGOUT("GATEWAY_IP  : %s\r\n", ipaddr_ntoa_r((const ip_addr_t *) &lpc_netif.gw, tmp_buff, 16));
 			prt_ip = 1;
 		}
 	}
