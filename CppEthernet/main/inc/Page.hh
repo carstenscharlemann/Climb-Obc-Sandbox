@@ -17,11 +17,13 @@ extern "C" {
 }
 
 class Page {
-	std::string myurl;
+
 public:
+
 	Page(const char *name);
 	virtual ~Page();
 
+	std::string myurl;
 	fs_file *GetHttpFile(void);
 
 };
