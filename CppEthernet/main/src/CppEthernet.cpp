@@ -9,11 +9,11 @@
 
 #include <cr_section_macros.h>
 
-//#include "CmdLine.h"
 #include "arch/lpc_arch.h" 	//  SysTick_Enable() from lwip/arch/lpc17xx_40xx_systick_arch.c
 #include "webserver.h"
 #include "lwip_fs.h"
-#include <Page.hh>
+#include "Page.hh"
+#include "Site.hh"
 
 
 /* Sets up system hardware */
@@ -33,12 +33,16 @@ void setupHardware(void)
 
 }
 
+static Site MySite = Site();
+
 extern "C" fs_file *get_fs_from_page(const char *name) {
-	Page p(name);
+	Page p = MySite.FindPage(name);
 	return p.GetHttpFile();
 }
 
+
 int main(void) {
+	MySite.AddPage(Page("/page1.html"));
 
 	setupHardware();
 	ws_init();
