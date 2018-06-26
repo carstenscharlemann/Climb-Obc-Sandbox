@@ -8,33 +8,32 @@
 
 #include <cstring>
 
-Page::Page(const char *name) {
+Page::Page(const char* name, const char* title,  const char* body) {
 	myurl = std::string(name);
+	mybody = std::string(body);
+	mytitle = std::string(title);
 }
 
 Page::~Page() {
 
 }
 
+static struct fs_file fs;
+static char buffer[400];
+
 fs_file *Page::GetHttpFile(void) {
-	static struct fs_file fs;
-	static char buffer[200];
 
-	if (myurl == "/page1.html") {
-		std::string content = "<html><head><title>Title 1</title></head><body><h1>Page 1</h1><a href=""/"">Home</a></body></html>";
 
-		int hlen = GetHTTP_Header(myurl.c_str(), buffer);
-		fs.data = (const char *) buffer;
+	std::string htmlcontent = "<html><head><title>" + mytitle + "</title></head><body>"+ mybody +"</body></html>";
 
-		memcpy((void *) &fs.data[hlen], (void *)content.c_str(), content.size() - 1);
+	// TODO: encapsulate somehow in Site.... or give callback as param, or ....
+	int hlen = GetHTTP_Header(myurl.c_str(), buffer);
+	fs.data = (const char *) buffer;
 
-		fs.len = hlen + content.size() - 1;
-		fs.index = fs.len;
-		fs.http_header_included = 1;
-
-		return &fs;
-	} else {
-		return 0;
-	}
-
+    memcpy((void *) &(fs.data[hlen]), (void *)htmlcontent.c_str(), htmlcontent.size() - 1);
+	fs.len = hlen + htmlcontent.size() - 1;
+	fs.index = fs.len;
+	fs.http_header_included = 1;
+	fs.is_custom_file = true;
+	return &fs;
 }

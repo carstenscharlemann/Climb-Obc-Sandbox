@@ -33,6 +33,7 @@
 //*****************************************************************************
 
 #include <stdlib.h>
+#include "board.h"
 
 void *operator new(size_t size)
 {
@@ -84,7 +85,15 @@ extern "C" void free(void *) {
 namespace __gnu_cxx {
 void __verbose_terminate_handler()
 {
-  while(1);
+	// Lets show this fatal Error with flashing Led
+	int i = 0;
+	while(1) {
+		if (i++ & 0x010000) {
+			Board_LED_Set(LED_RED, false);
+		} else {
+			Board_LED_Set(LED_RED, true);
+		}
+	}
 }
 }
 #endif

@@ -19,13 +19,15 @@ extern "C" {
 class Page {
 
 public:
-
-	Page(const char *name);
+	Page(const char *name, const char* title, const char* body);
 	virtual ~Page();
 
 	std::string myurl;
 	fs_file *GetHttpFile(void);
 
+private:
+	std::string mytitle;
+	std::string mybody;
 };
 
 

@@ -15,18 +15,22 @@
 
 #include "page.hh"
 
-
 class Site {
-	std::string BaseUri;
-	std::list<Page> Pages;
 
 public:
 	Site();
 	Site(const char *baseUri);
 	virtual ~Site();
 
-	void AddPage(Page page);
-	Page FindPage(std::string uri);
+	void AddPage(Page* page);
+	void AddDefaultPage(Page* page);
+	void AddNotFoundPage(Page* page);
+
+	Page* FindPage(std::string uri);
+
+private:
+	std::string BaseUri;
+	std::list<Page*> Pages;
 };
 
 
