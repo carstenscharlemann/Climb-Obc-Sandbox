@@ -54,9 +54,8 @@
 
 /* Default html file */
 const static char http_index_html[] =
-	"<html><head><title>Congrats!</title></head>"
-	"<body><h1>Welcome to our lwIP HTTP server!</h1>"
-	"<a href=""/page1.html"">Goto Page1</a></body> "
+	"<html><head><title>Nodefault</title></head>"
+	"<body>lwIP HTTP server: define a DefaultPage at e.g. 'index.html'</body> "
 	"</html>";
 #ifndef SECTOR_SZ
 #define SECTOR_SZ 512

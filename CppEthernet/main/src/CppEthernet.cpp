@@ -9,11 +9,11 @@
 
 #include <cr_section_macros.h>
 
-//#include "CmdLine.h"
 #include "arch/lpc_arch.h" 	//  SysTick_Enable() from lwip/arch/lpc17xx_40xx_systick_arch.c
 #include "webserver.h"
 #include "lwip_fs.h"
-#include <Page.hh>
+#include "Page.hh"
+#include "Site.hh"
 
 
 /* Sets up system hardware */
@@ -33,10 +33,19 @@ void setupHardware(void)
 
 }
 
+static Site MySite = Site();
+
 extern "C" fs_file *get_fs_from_page(const char *name) {
-	Page p(name);
-	return p.GetHttpFile();
+	Page *p = MySite.FindPage(name);
+	if (p != 0) {
+		DEBUGOUT("[%s]: Returning: %s \n\r", name, p->myurl.c_str());
+		return p->GetHttpFile();
+	} else {
+		DEBUGOUT("[%s]: not found \n\r", name);
+		return 0;
+	}
 }
+
 
 int main(void) {
 
@@ -47,14 +56,11 @@ int main(void) {
 		// Poll and check for PHY stat changes of Ethernet
 		uint32_t physts = ws_poll_physts();
 		if (physts & PHY_LINK_CHANGED) {
+			// Not much usefull info to show here. We always have ame speed/duplex
 			if (physts & PHY_LINK_CONNECTED) {
 				Board_LED_Set(LED_RED, !(physts & PHY_LINK_ERROR));
-				Board_LED_Set(LED_GREEN, !(physts & PHY_LINK_FULLDUPLX));
-				Board_LED_Set(LED_BLUE, !(physts & PHY_LINK_SPEED100));
 			} else {
-				Board_LED_Set(0, true);
-				Board_LED_Set(1, true);
-				Board_LED_Set(2, true);
+				Board_LED_Set(LED_RED, true);
 			}
 		}
 	}
