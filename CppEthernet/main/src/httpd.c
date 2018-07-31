@@ -371,7 +371,7 @@ int g_iNumCGIs;
 
 #if LWIP_HTTPD_STRNSTR_PRIVATE
 /** Like strstr but does not need 'buffer' to be NULL-terminated */
-static char*
+char*
 strnstr(const char* buffer, const char* token, size_t n)
 {
   const char* p;
