@@ -35,7 +35,7 @@ int main(void) {
     // Set the LED to the state of "On"
     Board_LED_Set(0, true);
 
-    Board_UARTPutSTR("Hallo LPC (type 'm' for menue)\r");
+    Board_UARTPutSTR("Hallo LPC (type 'm' for manuel LEDs (r/R g/G b/B) and 'x' to be back in blinking.\r");
 
 #endif
 #endif
