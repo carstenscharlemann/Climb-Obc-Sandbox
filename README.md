@@ -10,6 +10,7 @@ Have fun playing around.
 
 Other How Tos..
 - [.. add a new git controlled Project in the workspace](mddocs/HowTos/AddNewProject.md)
+- [.. add a newly contributed project to your local workspace.](mddocs/HowTos/AddAvailableProject.md)
 
 
 There is a repository Wbsite configured. The website is accessible at: https://carstenscharlemann.github.io/Climb-Obc-Sandbox
