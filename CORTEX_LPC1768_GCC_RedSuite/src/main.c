@@ -156,7 +156,9 @@ char cIPAddress[ 16 ]; /* Enough space for "xxx.xxx.xxx.xxx\0". */
 	LCD_PrintString( 5, 30, cIPAddress, 14, COLOR_RED); */
 
 	// RKR: This webserver does not work with our (OM13085) board. We have another PHY: LAN8740 iso  DP83848C used in this example!
-    // xTaskCreate( vuIP_Task, "uIP", mainBASIC_WEB_STACK_SIZE, ( void * ) NULL, mainUIP_TASK_PRIORITY, NULL );
+
+
+    xTaskCreate( vuIP_Task, "uIP", mainBASIC_WEB_STACK_SIZE, ( void * ) NULL, mainUIP_TASK_PRIORITY, NULL );
 
     /* Start the scheduler. */
 	vTaskStartScheduler();
