@@ -55,6 +55,11 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 	{2,  6,  IOCON_MODE_INACT | IOCON_FUNC0},	/* Led 4 Blue - also RGB LED Pin */
 	{1, 18,  IOCON_MODE_INACT | IOCON_FUNC0},	/* Led 1 green - Watchdog Feed   */
 
+	// GPIOs
+	{0,  29, IOCON_MODE_INACT | IOCON_FUNC0},	/* BL_SEL1    */
+	{0,   5, IOCON_MODE_INACT | IOCON_FUNC0},	/* Debug_SEL2 */
+
+
 
 };
 

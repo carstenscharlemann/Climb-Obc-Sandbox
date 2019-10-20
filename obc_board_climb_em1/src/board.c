@@ -42,6 +42,13 @@
 #define LED_BLUE_RGB_GPIO_PORT_NUM               2
 #define LED_BLUE_RGB_GPIO_BIT_NUM                6
 
+#define BOOT_SELECT_GPIO_PORT_NUM                0
+#define BOOT_SELECT_GPIO_BIT_NUM                29
+#define DEBUG_SELECT_GPIO_PORT_NUM               0
+#define DEBUG_SELECT_GPIO_BIT_NUM                5
+
+
+
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
@@ -63,9 +70,49 @@ static void Board_LED_Init(void)
 	Chip_GPIO_WriteDirBit(LPC_GPIO, LED_BLUE_RGB_GPIO_PORT_NUM, LED_BLUE_RGB_GPIO_BIT_NUM, true);
 }
 
+/* Initializes GPIO Dirs */
+static void Board_GPIO_Init(void)
+{
+	// Die Boot bits sind inputs
+	Chip_GPIO_WriteDirBit(LPC_GPIO, DEBUG_SELECT_GPIO_PORT_NUM, DEBUG_SELECT_GPIO_BIT_NUM, false);
+	Chip_GPIO_WriteDirBit(LPC_GPIO, BOOT_SELECT_GPIO_PORT_NUM, BOOT_SELECT_GPIO_BIT_NUM, false);
+}
+
 /*****************************************************************************
  * Public functions
  ****************************************************************************/
+
+bootmode_t GetBootmode(){
+	bool boot = Chip_GPIO_ReadPortBit(LPC_GPIO, BOOT_SELECT_GPIO_PORT_NUM, BOOT_SELECT_GPIO_BIT_NUM);
+	if (Chip_GPIO_ReadPortBit(LPC_GPIO, DEBUG_SELECT_GPIO_PORT_NUM, DEBUG_SELECT_GPIO_BIT_NUM)) {
+		 if (boot) {
+			return DebugEven;
+		 } else {
+			 return DebugOdd;
+		 }
+	} else {
+		if (boot) {
+			return Even;
+		 } else {
+			 return Odd;
+		 }
+	}
+}
+
+char* GetBootmodeStr() {
+	switch (GetBootmode()) {
+		case Odd:
+			return "Odd";
+		case Even:
+			return "Even";
+		case DebugOdd:
+			return "DebugOdd";
+		case DebugEven:
+			return "DebugEven";
+	}
+	return "Unknown";
+}
+
 
 /* Initialize UART pins */
 void Board_UART_Init(LPC_USART_T *pUART)
@@ -168,14 +215,7 @@ void Board_Init(void)
 
 	/* Initialize LEDs */
 	Board_LED_Init();
-}
-
-/* Returns the MAC address assigned to this board */
-void Board_ENET_GetMacADDR(uint8_t *mcaddr)
-{
-	const uint8_t boardmac[] = {0x00, 0x60, 0x37, 0x12, 0x34, 0x56};
-
-	memcpy(mcaddr, boardmac, 6);
+	Board_GPIO_Init();
 }
 
 /* Initialize pin muxing for SSP interface */
@@ -191,7 +231,7 @@ void Board_SSP_Init(LPC_SSP_T *pSSP)
 		 * P0.9: MOSI
 		 */
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 7, IOCON_MODE_INACT, IOCON_FUNC2);
-		Chip_IOCON_PinMux(LPC_IOCON, 0, 6, IOCON_MODE_INACT, IOCON_FUNC2);
+		// ! ist bei uns als GPIO S-STACIE IO1 verwendet !!! Chip_IOCON_PinMux(LPC_IOCON, 0, 6, IOCON_MODE_INACT, IOCON_FUNC2);
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 8, IOCON_MODE_INACT, IOCON_FUNC2);
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 9, IOCON_MODE_INACT, IOCON_FUNC2);
 	}
@@ -205,7 +245,7 @@ void Board_SSP_Init(LPC_SSP_T *pSSP)
 		 * P0.18: MOSI
 		 */
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 15, IOCON_MODE_INACT, IOCON_FUNC2);
-		Chip_IOCON_PinMux(LPC_IOCON, 0, 16, IOCON_MODE_INACT, IOCON_FUNC2);
+		Chip_IOCON_PinMux(LPC_IOCON, 0, 16, IOCON_MODE_INACT, IOCON_FUNC2);	// ist bei uns N.C.
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 17, IOCON_MODE_INACT, IOCON_FUNC2);
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 18, IOCON_MODE_INACT, IOCON_FUNC2);
 	}
@@ -248,19 +288,6 @@ void Board_SPI_DeassertSSEL(void)
 	Chip_GPIO_WritePortBit(LPC_GPIO, 0, 16, true);
 }
 
-void Board_Audio_Init(LPC_I2S_T *pI2S, int micIn)
-{
-	I2S_AUDIO_FORMAT_T I2S_Config;
-
-	/* Chip_Clock_EnablePeripheralClock(SYSCTL_CLOCK_I2S); */
-
-	I2S_Config.SampleRate = 48000;
-	I2S_Config.ChannelNumber = 2;	/* 1 is mono, 2 is stereo */
-	I2S_Config.WordWidth =  16;		/* 8, 16 or 32 bits */
-	Chip_I2S_Init(pI2S);
-	Chip_I2S_TxConfig(pI2S, &I2S_Config);
-}
-
 /* Sets up board specific I2C interface */
 void Board_I2C_Init(I2C_ID_T id)
 {
@@ -285,21 +312,5 @@ void Board_I2C_Init(I2C_ID_T id)
 		Chip_IOCON_EnableOD(LPC_IOCON, 0, 11);
 		break;
 	}
-}
-
-
-void Serial_CreateStream(void *Stream)
-{}
-
-void Board_USBD_Init(uint32_t port)
-{
-	/* VBUS is not connected on the NXP LPCXpresso LPC1769, so leave the pin at default setting. */
-	/*Chip_IOCON_PinMux(LPC_IOCON, 1, 30, IOCON_MODE_INACT, IOCON_FUNC2);*/ /* USB VBUS */
-	
-	Chip_IOCON_PinMux(LPC_IOCON, 0, 29, IOCON_MODE_INACT, IOCON_FUNC1);	/* P0.29 D1+, P0.30 D1- */
-	Chip_IOCON_PinMux(LPC_IOCON, 0, 30, IOCON_MODE_INACT, IOCON_FUNC1);
-
-	LPC_USB->USBClkCtrl = 0x12;                /* Dev, AHB clock enable */
-	while ((LPC_USB->USBClkSt & 0x12) != 0x12); 
 }
 

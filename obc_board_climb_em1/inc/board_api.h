@@ -135,16 +135,14 @@ bool Board_LED_Test(uint8_t LEDNumber);
  */
 void Board_LED_Toggle(uint8_t LEDNumber);
 
-/**
- * @brief	Turn on Board LCD Backlight
- * @param	Intensity	: Backlight intensity (0 = off, >=1 = on)
- * @return	None
- * @note	On boards where a GPIO is used to control backlight on/off state, a '0' or '1'
- * value will turn off or on the backlight. On some boards, a non-0 value will
- * control backlight intensity via a PWN. For PWM systems, the intensity value
- * is a percentage value between 0 and 100%.
- */
-void Board_SetLCDBacklight(uint8_t Intensity);
+
+//void Board_LED_SetColor(uint8_t LEDNumber, int rgb);
+
+
+typedef enum {DebugEven, DebugOdd, Even, Odd} bootmode_t;
+bootmode_t GetBootmode();
+char* GetBootmodeStr();
+
 
 /**
  * @brief Function prototype for a MS delay function. Board layers or example code may
