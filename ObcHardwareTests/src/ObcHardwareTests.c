@@ -37,7 +37,8 @@ int main(void) {
     Board_LED_Set(LED_GREEN_WD, true);
     Board_LED_Set(LED_BLUE, false);
 
-
+    Board_UARTPutSTR("hallo\n");
+   // printf("Hallo Semihost");
     // Force the counter to be placed into memory
     volatile static int i = 0 ;
     // Enter an infinite loop, just incrementing a counter
@@ -46,6 +47,9 @@ int main(void) {
         if (i % 1000000 == 0) {
         	Board_LED_Toggle(LED_GREEN_WD);
         	Board_LED_Toggle(LED_BLUE);
+        	Board_UARTPutSTR(".");
+        	printf("Loop: %d %f\n", i, (double)i/33335.3);
+
         }
     }
     return 0 ;
