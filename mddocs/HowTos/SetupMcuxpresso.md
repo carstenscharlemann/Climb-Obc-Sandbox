@@ -45,6 +45,7 @@ The MCUXpresso IDE is based on Eclipse. Eclipsa always starts up with your last 
 
 ![Step3f](./McuPic3.png)
 
+- **Tick the Clone Submodule Check BOX !!!** (is used to get ado lib for OBC_1769_core repos now!
 - Now select 'Import existing Eclipse Projects'
 - Select (tick) all projects to import in your workspace
 - Click 'Finish' Button to get all projects into your workspace.
